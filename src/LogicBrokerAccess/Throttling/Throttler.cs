@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NewEggAccess.Throttling
+namespace LogicBrokerAccess.Throttling
 {
 	public sealed class Throttler : IDisposable
 	{

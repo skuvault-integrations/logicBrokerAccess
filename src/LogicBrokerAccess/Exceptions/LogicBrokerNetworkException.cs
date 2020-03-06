@@ -8,13 +8,13 @@ namespace LogicBrokerAccess.Exceptions
 		public LogicBrokerNetworkException( string message ) : base( message ) { }
 	}
 
-	public class NewEggUnauthorizedException : LogicBrokerException
+	public class LogicBrokerUnauthorizedException : LogicBrokerException
 	{
-		public NewEggUnauthorizedException( string message ) : base( message) { }
+		public LogicBrokerUnauthorizedException( string message ) : base( message) { }
 	}
 
-	public class NewEggRateLimitsExceeded : LogicBrokerNetworkException
+	public class LogicBrokerRateLimitsExceeded : LogicBrokerNetworkException
 	{
-		public NewEggRateLimitsExceeded( string message ) : base( message ) { }
+		public LogicBrokerRateLimitsExceeded( string message ) : base( message ) { }
 	}
 }
