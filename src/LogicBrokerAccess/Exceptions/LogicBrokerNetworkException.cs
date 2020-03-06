@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogicBrokerAccess.Commands;
+using System;
 
 namespace LogicBrokerAccess.Exceptions
 {

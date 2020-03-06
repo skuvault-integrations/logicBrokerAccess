@@ -10,7 +10,7 @@ namespace LogicBrokerAccessTests
 {
 	public abstract class BaseTest
 	{
-		private readonly string sandboxApiBaseUri = "https://stage.commerceapi.io/api";
+		private readonly string sandboxApiBaseUri = "https://stage.commerceapi.io";
 
 		public LogicBrokerCredentials Credentials { get; }
 		public LogicBrokerConfig Config { get; }
