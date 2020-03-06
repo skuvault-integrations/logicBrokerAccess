@@ -1,2 +1,2 @@
 # logicBrokerAccess
-logicBroker Api wrapper
+logicBroker Api .NET wrapper
