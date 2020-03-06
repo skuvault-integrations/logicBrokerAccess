@@ -10,12 +10,16 @@ namespace LogicBrokerAccessTests
 {
 	public abstract class BaseTest
 	{
+		private readonly string sandboxApiBaseUri = "https://stage.commerceapi.io/api";
+
 		public LogicBrokerCredentials Credentials { get; }
+		public LogicBrokerConfig Config { get; }
 
 		public BaseTest()
 		{
 			var testCredentials = this.LoadTestSettings< TestCredentials >( @"\..\..\credentials.csv" );
 			this.Credentials = new LogicBrokerCredentials( testCredentials.SubscriptionKey );
+			this.Config = new LogicBrokerConfig( sandboxApiBaseUri );
 		}
 
 		protected T LoadTestSettings< T >( string filePath )
