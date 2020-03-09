@@ -66,13 +66,6 @@ namespace LogicBrokerAccess.Services
 			return response;
 		}
 
-		//TODO Error responses (invalid subscription-key)
-		//{
-		//    "Code": "Unauthorized",
-		//    "Message": "Unauthorized Access. Invalid subscription key.",
-		//    "Body": null
-		//}
-
 		private void ThrowIfError( HttpResponseMessage response, string message )
 		{
 			var responseStatusCode = response.StatusCode;
@@ -95,8 +88,6 @@ namespace LogicBrokerAccess.Services
 				return new ActionPolicy( Config.NetworkOptions.RetryAttempts, Config.NetworkOptions.DelayBetweenFailedRequestsInSec, Config.NetworkOptions.DelayFailRequestRate )
 					.ExecuteAsync( async () =>
 					{
-						//Misc.InitSecurityProtocol();
-
 						using( var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
 							LogicBrokerLogger.LogStarted( this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() ) );

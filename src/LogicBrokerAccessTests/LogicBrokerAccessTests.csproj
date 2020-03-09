@@ -67,6 +67,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="DateTimeConverterTests.cs" />
+    <Compile Include="OrderMapperTests.cs" />
     <Compile Include="OrderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCredentials.cs" />
