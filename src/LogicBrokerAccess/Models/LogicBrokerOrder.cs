@@ -4,9 +4,11 @@ using System.Linq;
 
 namespace LogicBrokerAccess.Models
 {
-	public class LogicBrokerOrderRecords
+	public class LogicBrokerOrderResponse
 	{
 		public LogicBrokerOrder[] Records { get; set; }
+		public int TotalPages { get; set; }
+		public int CurrentPage { get; set; }
 	}
 
 	public class LogicBrokerOrder

@@ -4,20 +4,33 @@ namespace LogicBrokerAccess.Commands
 {
 	public abstract class LogicBrokerCommand
 	{
-		protected const string GetOrdersReadyUrl = "/api/v2/Orders/Ready";
+		protected const string GetOrdersReadyEndpointUrl = "/api/v2/Orders/Ready";
 
-		public string Url { get; protected set; }
+		public string Url { get { return $"{EndpointUrl}{PagingUrl}"; } }
+		public string EndpointUrl { get; protected set; }
 		public string Payload { get; protected set; }
+		public const int DefaultPageSize = 100;
+		private string PagingUrl => $"&filters.page={Page}&filters.pageSize={PageSize}";
+		public int Page { get; private set; }
+		public int PageSize { get; }
 
-		internal string GetCommandUrl( string apiBaseUrl, string relativeUrl, string subscriptionKey )
+		protected LogicBrokerCommand( string domainUrl, string endpointUrl, string filterUrl, string subscriptionKey, int pageSize = DefaultPageSize, int page = 0 )
 		{
-			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( relativeUrl, "relativeUrl" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( domainUrl, "domainUrl" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( endpointUrl, "relativeUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
 
-			return $"{apiBaseUrl}{relativeUrl}?subscription-key={subscriptionKey}";
+			EndpointUrl = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}&{filterUrl}";
+			PageSize = pageSize;
+			Page = page;
 		}
 
-		//public LogicBrokerConfig Config { get; protected set; }
+		internal void UpdateCurrentPage( int? currentPage )
+		{
+			if( currentPage.HasValue )
+			{
+				this.Page = currentPage.Value;
+			}
+		}
 	}	
 }

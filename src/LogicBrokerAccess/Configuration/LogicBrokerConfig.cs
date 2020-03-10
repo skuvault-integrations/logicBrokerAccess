@@ -4,23 +4,23 @@ namespace LogicBrokerAccess.Configuration
 {
 	public class LogicBrokerConfig
 	{
-		public string ApiBaseUrl { get; }
+		public string DomainUrl { get; }
 
 		public readonly ThrottlingOptions ThrottlingOptions;
 		public readonly NetworkOptions NetworkOptions;
 
-		public LogicBrokerConfig( string apiBaseUrl, ThrottlingOptions throttlingOptions, NetworkOptions networkOptions )
+		public LogicBrokerConfig( string domainUrl, ThrottlingOptions throttlingOptions, NetworkOptions networkOptions )
 		{
 			Condition.Requires( throttlingOptions, "throttlingOptions" ).IsNotNull();
 			Condition.Requires( networkOptions, "networkOptions" ).IsNotNull();
-			Condition.Requires( apiBaseUrl, "apiBaseUrl" ).IsNotNull();
+			Condition.Requires( domainUrl, "domainUrl" ).IsNotNull();
 
 			this.ThrottlingOptions = throttlingOptions;
 			this.NetworkOptions = networkOptions;
-			this.ApiBaseUrl = apiBaseUrl;
+			this.DomainUrl = domainUrl;
 		}
 
-		public LogicBrokerConfig( string apiBaseUrl ) : this( apiBaseUrl, ThrottlingOptions.LogicBrokerDefaultThrottlingOptions, NetworkOptions.LogicBrokerDefaultNetworkOptions )
+		public LogicBrokerConfig( string domainUrl ) : this( domainUrl, ThrottlingOptions.LogicBrokerDefaultThrottlingOptions, NetworkOptions.LogicBrokerDefaultNetworkOptions )
 		{ }
 	}
 

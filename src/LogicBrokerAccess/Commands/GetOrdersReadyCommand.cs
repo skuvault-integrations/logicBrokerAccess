@@ -5,10 +5,14 @@ namespace LogicBrokerAccess.Commands
 {
 	public class GetOrdersReadyCommand : LogicBrokerCommand
 	{
-		public GetOrdersReadyCommand( string apiBaseUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc )
+		//TODO GUARD-451 Too many parameters
+		public GetOrdersReadyCommand( string domainUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc, int pageSize = DefaultPageSize, int page = 0 ) 
+			: base( domainUrl, GetOrdersReadyEndpointUrl, subscriptionKey, GetOrderReadyFilterUrl( startDateUtc, endDateUtc ), pageSize, page )
+		{ }
+
+		private static string GetOrderReadyFilterUrl( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var baseRequestUrl = base.GetCommandUrl( apiBaseUrl, GetOrdersReadyUrl, subscriptionKey );
-			this.Url = $"{baseRequestUrl}&filters.from={startDateUtc.ToStringUtcIso8601()}&filters.to={endDateUtc.ToStringUtcIso8601()}";
+			return $"&filters.from={startDateUtc.ToStringUtcIso8601()}&filters.to={endDateUtc.ToStringUtcIso8601()}";
 		}
 	}
 }

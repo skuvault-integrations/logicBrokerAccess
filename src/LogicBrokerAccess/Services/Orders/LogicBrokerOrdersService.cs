@@ -18,20 +18,33 @@ namespace LogicBrokerAccess.Services.Orders
 
 		public async Task< IEnumerable< Order > > GetOrderDetailsAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
-			var command = new GetOrdersReadyCommand( base.Config.ApiBaseUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc );
 			var orders = new List< Order >();
 			try
 			{
-				var response = await base.GetAsync< LogicBrokerOrderRecords >( command, token, mark ).ConfigureAwait( false );
-				if( response?.Records != null ) 
-				{
-					orders = response.Records.Select( r => r.ToSvOrder() ).ToList();
-				}
+				orders = await CollectOrdersFromAllPages( startDateUtc, endDateUtc, mark, token );
 			}
 			catch ( Exception ex )
 			{
 				LogicBrokerLogger.LogTrace( ex, "message" );
 			}
+
+			return orders;
+		}
+
+		private async Task< List< Order > > CollectOrdersFromAllPages( DateTime startDateUtc, DateTime endDateUtc, Mark mark, CancellationToken token )
+		{
+			var orders = new List< Order >();
+			LogicBrokerOrderResponse response;
+			LogicBrokerCommand command = new GetOrdersReadyCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, LogicBrokerCommand.DefaultPageSize );
+			do
+			{
+				response = await base.GetAsync< LogicBrokerOrderResponse >( command, token, mark ).ConfigureAwait( false );
+				if( response?.Records != null )
+				{
+					orders.AddRange( response.Records.Select( r => r.ToSvOrder() ).ToList() );
+				}
+				command.UpdateCurrentPage( response?.CurrentPage + 1 );
+			} while( response?.CurrentPage < response?.TotalPages );
 
 			return orders;
 		}
