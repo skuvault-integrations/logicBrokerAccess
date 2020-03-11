@@ -13,7 +13,7 @@ namespace LogicBrokerAccess.Services.Orders
 {
 	public class LogicBrokerOrdersService : BaseService, ILogicBrokerOrdersService
 	{
-		public LogicBrokerOrdersService( LogicBrokerConfig config, LogicBrokerCredentials credentials ) : base( credentials, config )
+		public LogicBrokerOrdersService( LogicBrokerConfig config, LogicBrokerCredentials credentials, int pageSize ) : base( credentials, config, pageSize )
 		{ }
 
 		public async Task< IEnumerable< Order > > GetOrderDetailsAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
@@ -35,7 +35,7 @@ namespace LogicBrokerAccess.Services.Orders
 		{
 			var orders = new List< Order >();
 			LogicBrokerOrderResponse response;
-			LogicBrokerCommand command = new GetOrdersReadyCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, LogicBrokerCommand.DefaultPageSize );
+			LogicBrokerCommand command = new GetOrdersReadyCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, base.PageSize );
 			do
 			{
 				response = await base.GetAsync< LogicBrokerOrderResponse >( command, token, mark ).ConfigureAwait( false );
@@ -44,7 +44,7 @@ namespace LogicBrokerAccess.Services.Orders
 					orders.AddRange( response.Records.Select( r => r.ToSvOrder() ).ToList() );
 				}
 				command.UpdateCurrentPage( response?.CurrentPage + 1 );
-			} while( response?.CurrentPage < response?.TotalPages );
+			} while( command.Page < response?.TotalPages );
 
 			return orders;
 		}

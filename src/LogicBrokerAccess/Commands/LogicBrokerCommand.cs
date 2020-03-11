@@ -6,23 +6,23 @@ namespace LogicBrokerAccess.Commands
 	{
 		protected const string GetOrdersReadyEndpointUrl = "/api/v2/Orders/Ready";
 
-		public string Url { get { return $"{EndpointUrl}{PagingUrl}"; } }
-		public string EndpointUrl { get; protected set; }
+		public string Url { get { return $"{endpointUrl}{pagingUrl}"; } }
+		private readonly string endpointUrl;
 		public string Payload { get; protected set; }
 		public const int DefaultPageSize = 100;
-		private string PagingUrl => $"&filters.page={Page}&filters.pageSize={PageSize}";
+		protected readonly int pageSize;
 		public int Page { get; private set; }
-		public int PageSize { get; }
+		private string pagingUrl => $"&filters.page={Page}&filters.pageSize={pageSize}";
 
-		protected LogicBrokerCommand( string domainUrl, string endpointUrl, string filterUrl, string subscriptionKey, int pageSize = DefaultPageSize, int page = 0 )
+		protected LogicBrokerCommand( string domainUrl, string endpointUrl, string subscriptionKey, string filterUrl, int pageSize = DefaultPageSize, int page = 0 )
 		{
 			Condition.Requires( domainUrl, "domainUrl" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( endpointUrl, "relativeUrl" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( endpointUrl, "endpointUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
 
-			EndpointUrl = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}&{filterUrl}";
-			PageSize = pageSize;
-			Page = page;
+			this.endpointUrl = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}&{filterUrl}";
+			this.pageSize = pageSize;
+			this.Page = page;
 		}
 
 		internal void UpdateCurrentPage( int? currentPage )

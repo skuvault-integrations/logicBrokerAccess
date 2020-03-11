@@ -12,20 +12,31 @@ namespace LogicBrokerAccessTests
 	[ TestFixture ]
 	public class OrderTests : BaseTest
 	{
-		private ILogicBrokerOrdersService _ordersService;
+		private ILogicBrokerOrdersService ordersService;
+		private LogicBrokerFactory logicBrokerFactory;
 
 		[ SetUp ]
 		public void Init()
 		{
-			_ordersService = new LogicBrokerFactory( this.Config ).CreateOrdersService( this.Credentials );
+			logicBrokerFactory = new LogicBrokerFactory( this.Config );
+			ordersService = logicBrokerFactory.CreateOrdersService( this.Credentials );
 		}
 
 		[ Test ]
-		public void GetReadyOrders()
+		public void GetOrderDetails()
 		{
-			var mark = Mark.Blank();
+			var orders = ordersService.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
 
-			var orders = _ordersService.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, mark ).Result;
+			orders.Count().Should().NotBe( 0 );
+		}
+
+		[ Test ]
+		public void CollectOrdersFromAllPages()
+		{
+			int pageSize = 1;
+			ILogicBrokerOrdersService ordersServiceWithPageSize1 = logicBrokerFactory.CreateOrdersService( this.Credentials, pageSize );
+
+			var orders = ordersServiceWithPageSize1.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
 
 			orders.Count().Should().NotBe( 0 );
 		}

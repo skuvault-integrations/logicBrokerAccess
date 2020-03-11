@@ -21,7 +21,8 @@ namespace LogicBrokerAccess.Services
 		protected LogicBrokerConfig Config { get; private set; }
 		protected Throttler Throttler { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
-		protected Func< string > _additionalLogInfo;
+		private Func< string > _additionalLogInfo;
+		protected readonly int PageSize;
 
 		public Func< string > AdditionalLogInfo
 		{
@@ -29,14 +30,16 @@ namespace LogicBrokerAccess.Services
 			set => _additionalLogInfo = value;
 		}
 
-		public BaseService( LogicBrokerCredentials credentials, LogicBrokerConfig config )
+		public BaseService( LogicBrokerCredentials credentials, LogicBrokerConfig config, int pageSize )
 		{
 			Condition.Requires( credentials, "credentials" ).IsNotNull();
 			Condition.Requires( config, "config" ).IsNotNull();
+			Condition.Requires( pageSize, "pageSize" ).IsGreaterThan( 0 );
 
 			this.Credentials = credentials;
 			this.Config = config;
 			this.Throttler = new Throttler( config.ThrottlingOptions.MaxRequestsPerTimeInterval, config.ThrottlingOptions.TimeIntervalInSec, config.ThrottlingOptions.MaxRetryAttempts );
+			this.PageSize = pageSize;
 			HttpClient = new HttpClient();
 		}
 

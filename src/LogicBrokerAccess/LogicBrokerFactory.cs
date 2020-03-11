@@ -1,4 +1,5 @@
-﻿using LogicBrokerAccess.Configuration;
+﻿using LogicBrokerAccess.Commands;
+using LogicBrokerAccess.Configuration;
 using LogicBrokerAccess.Services.Orders;
 
 namespace LogicBrokerAccess
@@ -12,9 +13,9 @@ namespace LogicBrokerAccess
 			this.Config = config;
 		}
 
-		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials )
+		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials, int pageSize = LogicBrokerCommand.DefaultPageSize )
 		{
-			return new LogicBrokerOrdersService( this.Config, credentials );
+			return new LogicBrokerOrdersService( this.Config, credentials, pageSize );
 		}
 	}
 }
