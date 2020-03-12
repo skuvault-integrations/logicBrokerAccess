@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LogicBrokerAccess.Commands;
+using LogicBrokerAccess.Configuration;
 
 namespace LogicBrokerAccess.Throttling
 {
@@ -14,15 +15,16 @@ namespace LogicBrokerAccess.Throttling
 		private readonly int _delay;
 		private readonly int _delayRate;
 
-		public ActionPolicy( int attempts, int delay, int delayRate )
+		public ActionPolicy( NetworkOptions networkOptions )
 		{
-			Condition.Requires( attempts ).IsGreaterThan( 0 );
-			Condition.Requires( delay ).IsGreaterOrEqual( 0 );
-			Condition.Requires( delayRate ).IsGreaterOrEqual( 0 );
+			Condition.Requires( networkOptions, "networkOptions" ).IsNotNull();
+			Condition.Requires( networkOptions.RetryAttempts, "networkOptions.RetryAttempts" ).IsGreaterThan( 0 );
+			Condition.Requires( networkOptions.DelayBetweenFailedRequestsInSec, "networkOptions.DelayBetweenFailedRequestsInSec" ).IsGreaterOrEqual( 0 );
+			Condition.Requires( networkOptions.DelayFailRequestRate, "networkOptions.DelayFailRequestRate" ).IsGreaterOrEqual( 0 );
 
-			this._retryAttempts = attempts;
-			this._delay = delay;
-			this._delayRate = delayRate;
+			this._retryAttempts = networkOptions.RetryAttempts;
+			this._delay = networkOptions.DelayBetweenFailedRequestsInSec;
+			this._delayRate = networkOptions.DelayFailRequestRate;
 		}
 
 		/// <summary>

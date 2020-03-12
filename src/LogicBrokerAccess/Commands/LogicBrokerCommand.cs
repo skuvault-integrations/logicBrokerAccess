@@ -1,4 +1,6 @@
 ﻿using CuttingEdge.Conditions;
+using LogicBrokerAccess.Configuration;
+using LogicBrokerAccess.Throttling;
 
 namespace LogicBrokerAccess.Commands
 {
@@ -6,31 +8,49 @@ namespace LogicBrokerAccess.Commands
 	{
 		protected const string GetOrdersReadyEndpointUrl = "/api/v2/Orders/Ready";
 
-		public string Url { get { return $"{endpointUrl}{pagingUrl}"; } }
+		public string Url { get { return $"{endpointUrl}{Paging.PagingUrl}"; } }
 		private readonly string endpointUrl;
 		public string Payload { get; protected set; }
-		public const int DefaultPageSize = 100;
-		protected readonly int pageSize;
-		public int Page { get; private set; }
-		private string pagingUrl => $"&filters.page={Page}&filters.pageSize={pageSize}";
+		public Paging Paging { get; private set; }
+		public Throttler Throttler { get; private set; }
 
-		protected LogicBrokerCommand( string domainUrl, string endpointUrl, string subscriptionKey, string filterUrl, int pageSize = DefaultPageSize, int page = 0 )
+		protected LogicBrokerCommand( string domainUrl, string endpointUrl, string subscriptionKey, string filterUrl, ThrottlingOptions throttlingOptions, Paging paging = null )
 		{
 			Condition.Requires( domainUrl, "domainUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( endpointUrl, "endpointUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( throttlingOptions, "throttlingOptions" ).IsNotNull();
 
 			this.endpointUrl = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}&{filterUrl}";
-			this.pageSize = pageSize;
-			this.Page = page;
+			this.Paging = paging ?? Paging.CreateDefault();
+			this.Throttler = new Throttler( throttlingOptions );
 		}
 
 		internal void UpdateCurrentPage( int? currentPage )
 		{
 			if( currentPage.HasValue )
 			{
-				this.Page = currentPage.Value;
+				this.Paging.CurrentPage = currentPage.Value;
 			}
 		}
-	}	
+	}
+	
+	public class Paging
+	{
+		public const int DefaultPageSize = 100;
+		private readonly int PageSize;
+		public int CurrentPage { get; set; }
+		public string PagingUrl { get { return $"&filters.page={CurrentPage}&filters.pageSize={PageSize}"; } }
+
+		public Paging( int pageSize = DefaultPageSize, int currentPage = 0 )
+		{
+			PageSize = pageSize;
+			CurrentPage = currentPage;
+		}
+
+		public static Paging CreateDefault()
+		{
+			return new Paging();
+		}
+	}
 }

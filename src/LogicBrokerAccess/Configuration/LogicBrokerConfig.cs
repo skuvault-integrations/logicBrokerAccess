@@ -6,21 +6,21 @@ namespace LogicBrokerAccess.Configuration
 	{
 		public string DomainUrl { get; }
 
-		public readonly ThrottlingOptions ThrottlingOptions;
+		public readonly int ThrottlingMaxRetryAttempts;
 		public readonly NetworkOptions NetworkOptions;
 
-		public LogicBrokerConfig( string domainUrl, ThrottlingOptions throttlingOptions, NetworkOptions networkOptions )
+		public LogicBrokerConfig( string domainUrl, int throttlingMaxRetryAttempts, NetworkOptions networkOptions )
 		{
-			Condition.Requires( throttlingOptions, "throttlingOptions" ).IsNotNull();
+			Condition.Requires( throttlingMaxRetryAttempts, "throttlingMaxRetryAttempts" ).IsGreaterThan( 0 );
 			Condition.Requires( networkOptions, "networkOptions" ).IsNotNull();
 			Condition.Requires( domainUrl, "domainUrl" ).IsNotNull();
 
-			this.ThrottlingOptions = throttlingOptions;
+			this.ThrottlingMaxRetryAttempts = throttlingMaxRetryAttempts;
 			this.NetworkOptions = networkOptions;
 			this.DomainUrl = domainUrl;
 		}
 
-		public LogicBrokerConfig( string domainUrl ) : this( domainUrl, ThrottlingOptions.LogicBrokerDefaultThrottlingOptions, NetworkOptions.LogicBrokerDefaultNetworkOptions )
+		public LogicBrokerConfig( string domainUrl ) : this( domainUrl, ThrottlingOptions.LogicBrokerDefaultThrottlingOptions.MaxRetryAttempts, NetworkOptions.LogicBrokerDefaultNetworkOptions )
 		{ }
 	}
 

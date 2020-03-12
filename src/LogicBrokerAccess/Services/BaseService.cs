@@ -19,7 +19,6 @@ namespace LogicBrokerAccess.Services
 	{
 		protected LogicBrokerCredentials Credentials { get; private set; }
 		protected LogicBrokerConfig Config { get; private set; }
-		protected Throttler Throttler { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
 		private Func< string > _additionalLogInfo;
 		protected readonly int PageSize;
@@ -38,7 +37,6 @@ namespace LogicBrokerAccess.Services
 
 			this.Credentials = credentials;
 			this.Config = config;
-			this.Throttler = new Throttler( config.ThrottlingOptions.MaxRequestsPerTimeInterval, config.ThrottlingOptions.TimeIntervalInSec, config.ThrottlingOptions.MaxRetryAttempts );
 			this.PageSize = pageSize;
 			HttpClient = new HttpClient();
 		}
@@ -86,9 +84,9 @@ namespace LogicBrokerAccess.Services
 
 		private Task< T > ThrottleRequestAsync< T >( LogicBrokerCommand command, Mark mark, Func< CancellationToken, Task< T > > processor, CancellationToken token )
 		{
-			return Throttler.ExecuteAsync( () =>
+			return command.Throttler.ExecuteAsync( () =>
 			{
-				return new ActionPolicy( Config.NetworkOptions.RetryAttempts, Config.NetworkOptions.DelayBetweenFailedRequestsInSec, Config.NetworkOptions.DelayFailRequestRate )
+				return new ActionPolicy( Config.NetworkOptions )
 					.ExecuteAsync( async () =>
 					{
 						using( var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource( token ) )

@@ -13,7 +13,7 @@ namespace LogicBrokerAccess
 			this.Config = config;
 		}
 
-		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials, int pageSize = LogicBrokerCommand.DefaultPageSize )
+		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials, int pageSize = Paging.DefaultPageSize )
 		{
 			return new LogicBrokerOrdersService( this.Config, credentials, pageSize );
 		}
