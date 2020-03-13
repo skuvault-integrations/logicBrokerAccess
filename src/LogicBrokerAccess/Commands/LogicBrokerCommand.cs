@@ -6,6 +6,7 @@ namespace LogicBrokerAccess.Commands
 {
 	public abstract class LogicBrokerCommand
 	{
+		protected const string GetOrdersEndpointUrl = "/api/v2/Orders";
 		protected const string GetOrdersReadyEndpointUrl = "/api/v2/Orders/Ready";
 
 		public string Url { get { return $"{endpointUrl}{Paging.PagingUrl}"; } }

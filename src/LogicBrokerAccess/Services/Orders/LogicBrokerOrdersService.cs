@@ -38,7 +38,7 @@ namespace LogicBrokerAccess.Services.Orders
 			var orders = new List< Order >();
 			LogicBrokerOrderResponse response;
 			var paging = new Paging( base.PageSize );
-			LogicBrokerCommand command = new GetOrdersReadyCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, base.Config.ThrottlingMaxRetryAttempts, paging );
+			LogicBrokerCommand command = new GetOrdersCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, base.Config.ThrottlingMaxRetryAttempts, paging );
 			do
 			{
 				response = await base.GetAsync< LogicBrokerOrderResponse >( command, token, mark ).ConfigureAwait( false );
