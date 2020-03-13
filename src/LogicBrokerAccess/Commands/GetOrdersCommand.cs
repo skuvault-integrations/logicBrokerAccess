@@ -1,5 +1,5 @@
-﻿using LogicBrokerAccess.Configuration;
-using LogicBrokerAccess.Shared;
+﻿using LogicBrokerAccess.Shared;
+using LogicBrokerAccess.Throttling;
 using System;
 
 namespace LogicBrokerAccess.Commands
@@ -10,18 +10,23 @@ namespace LogicBrokerAccess.Commands
 		private const int MaxRequestsPerTimeInterval = 1;
 		private const int TimeIntervalInSec = 3;
 
-		public GetOrdersCommand( string domainUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc, int throttlingMaxRetryAttempts, Paging paging = null ) 
-			: base( domainUrl, GetOrdersEndpointUrl, subscriptionKey, GetOrderFilterUrl( startDateUtc, endDateUtc ), GetThrottlingOptions( throttlingMaxRetryAttempts ), paging )
+		public GetOrdersCommand( string domainUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc, Paging paging = null ) 
+			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetOrderFilterUrl( startDateUtc, endDateUtc ), GetThrottlingOptions(), paging )
 		{ }
+
+		private static BaseCommandUrl GetCommandUrl( string domainUrl, string subscriptionKey )
+		{
+			return new BaseCommandUrl( domainUrl, GetOrdersPath, subscriptionKey );
+		}
 
 		private static string GetOrderFilterUrl( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			return $"&filters.from={startDateUtc.ToStringUtcIso8601()}&filters.to={endDateUtc.ToStringUtcIso8601()}";
 		}
 
-		private static ThrottlingOptions GetThrottlingOptions( int throttlingMaxRetryAttempts )
+		private static ThrottlingOptions GetThrottlingOptions()
 		{
-			return new ThrottlingOptions( MaxRequestsPerTimeInterval, TimeIntervalInSec, throttlingMaxRetryAttempts );
+			return new ThrottlingOptions( MaxRequestsPerTimeInterval, TimeIntervalInSec);
 		}
 	}
 }

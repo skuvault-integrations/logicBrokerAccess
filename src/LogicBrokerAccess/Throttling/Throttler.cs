@@ -1,4 +1,4 @@
-﻿using LogicBrokerAccess.Configuration;
+﻿using CuttingEdge.Conditions;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -140,5 +140,32 @@ namespace LogicBrokerAccess.Throttling
 			Dispose( true );
 		}
 		#endregion
+	}
+
+	public class ThrottlingOptions
+	{
+		public int MaxRequestsPerTimeInterval { get; private set; }
+		public int TimeIntervalInSec { get; private set; }
+		public int MaxRetryAttempts { get; private set; }
+		public const int DefaultMaxRetryAttempts = 10;
+
+		public ThrottlingOptions( int maxRequests, int timeIntervalInSec, int maxRetryAttempts = DefaultMaxRetryAttempts )
+		{
+			Condition.Requires( maxRequests, "maxRequests" ).IsGreaterOrEqual( 1 );
+			Condition.Requires( timeIntervalInSec, "timeIntervalInSec" ).IsGreaterOrEqual( 1 );
+			Condition.Requires( maxRetryAttempts, "maxRetryAttempts" ).IsGreaterOrEqual( 0 );
+
+			this.MaxRequestsPerTimeInterval = maxRequests;
+			this.TimeIntervalInSec = timeIntervalInSec;
+			this.MaxRetryAttempts = maxRetryAttempts;
+		}
+
+		public static ThrottlingOptions LogicBrokerDefaultThrottlingOptions
+		{
+			get
+			{
+				return new ThrottlingOptions( 1, 3 );
+			}
+		}
 	}
 }

@@ -20,11 +20,11 @@ namespace LogicBrokerAccess.Throttling
 			Condition.Requires( networkOptions, "networkOptions" ).IsNotNull();
 			Condition.Requires( networkOptions.RetryAttempts, "networkOptions.RetryAttempts" ).IsGreaterThan( 0 );
 			Condition.Requires( networkOptions.DelayBetweenFailedRequestsInSec, "networkOptions.DelayBetweenFailedRequestsInSec" ).IsGreaterOrEqual( 0 );
-			Condition.Requires( networkOptions.DelayFailRequestRate, "networkOptions.DelayFailRequestRate" ).IsGreaterOrEqual( 0 );
+			Condition.Requires( networkOptions.DelayFailedRequestRate, "networkOptions.DelayFailRequestRate" ).IsGreaterOrEqual( 0 );
 
 			this._retryAttempts = networkOptions.RetryAttempts;
 			this._delay = networkOptions.DelayBetweenFailedRequestsInSec;
-			this._delayRate = networkOptions.DelayFailRequestRate;
+			this._delayRate = networkOptions.DelayFailedRequestRate;
 		}
 
 		/// <summary>

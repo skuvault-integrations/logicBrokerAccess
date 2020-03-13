@@ -1,4 +1,5 @@
 ﻿using CuttingEdge.Conditions;
+using LogicBrokerAccess.Throttling;
 
 namespace LogicBrokerAccess.Configuration
 {
@@ -6,48 +7,19 @@ namespace LogicBrokerAccess.Configuration
 	{
 		public string DomainUrl { get; }
 
-		public readonly int ThrottlingMaxRetryAttempts;
 		public readonly NetworkOptions NetworkOptions;
 
-		public LogicBrokerConfig( string domainUrl, int throttlingMaxRetryAttempts, NetworkOptions networkOptions )
+		public LogicBrokerConfig( string domainUrl, NetworkOptions networkOptions )
 		{
-			Condition.Requires( throttlingMaxRetryAttempts, "throttlingMaxRetryAttempts" ).IsGreaterThan( 0 );
 			Condition.Requires( networkOptions, "networkOptions" ).IsNotNull();
 			Condition.Requires( domainUrl, "domainUrl" ).IsNotNull();
 
-			this.ThrottlingMaxRetryAttempts = throttlingMaxRetryAttempts;
 			this.NetworkOptions = networkOptions;
 			this.DomainUrl = domainUrl;
 		}
 
-		public LogicBrokerConfig( string domainUrl ) : this( domainUrl, ThrottlingOptions.LogicBrokerDefaultThrottlingOptions.MaxRetryAttempts, NetworkOptions.LogicBrokerDefaultNetworkOptions )
+		public LogicBrokerConfig( string domainUrl ) : this( domainUrl, NetworkOptions.LogicBrokerDefaultNetworkOptions )
 		{ }
-	}
-
-	public class ThrottlingOptions
-	{
-		public int MaxRequestsPerTimeInterval { get; private set; }
-		public int TimeIntervalInSec { get; private set; }
-		public int MaxRetryAttempts { get; private set; }
-
-		public ThrottlingOptions( int maxRequests, int timeIntervalInSec, int maxRetryAttempts )
-		{
-			Condition.Requires( maxRequests, "maxRequests" ).IsGreaterOrEqual( 1 );
-			Condition.Requires( timeIntervalInSec, "timeIntervalInSec" ).IsGreaterOrEqual( 1 );
-			Condition.Requires( maxRetryAttempts, "maxRetryAttempts" ).IsGreaterOrEqual( 0 );
-
-			this.MaxRequestsPerTimeInterval = maxRequests;
-			this.TimeIntervalInSec = timeIntervalInSec;
-			this.MaxRetryAttempts = maxRetryAttempts;
-		}
-
-		public static ThrottlingOptions LogicBrokerDefaultThrottlingOptions
-		{
-			get
-			{
-				return new ThrottlingOptions( 4, 1, 10 );
-			}
-		}
 	}
 
 	public class NetworkOptions
@@ -55,19 +27,19 @@ namespace LogicBrokerAccess.Configuration
 		public int RequestTimeoutMs { get; private set; }
 		public int RetryAttempts { get; private set; }
 		public int DelayBetweenFailedRequestsInSec { get; private set; }
-		public int DelayFailRequestRate { get; private set; }
+		public int DelayFailedRequestRate { get; private set; }
 
-		public NetworkOptions( int requestTimeoutMs, int retryAttempts, int delayBetweenFailedRequestsInSec, int delayFaileRequestRate )
+		public NetworkOptions( int requestTimeoutMs, int retryAttempts, int delayBetweenFailedRequestsInSec, int delayFailedRequestRate )
 		{
 			Condition.Requires( requestTimeoutMs, "requestTimeoutMs" ).IsGreaterThan( 0 );
 			Condition.Requires( retryAttempts, "retryAttempts" ).IsGreaterOrEqual( 0 );
 			Condition.Requires( delayBetweenFailedRequestsInSec, "delayBetweenFailedRequestsInSec" ).IsGreaterOrEqual( 0 );
-			Condition.Requires( delayFaileRequestRate, "delayFaileRequestRate" ).IsGreaterOrEqual( 0 );
+			Condition.Requires( delayFailedRequestRate, "delayFailedRequestRate" ).IsGreaterOrEqual( 0 );
 
 			this.RequestTimeoutMs = requestTimeoutMs;
 			this.RetryAttempts = retryAttempts;
 			this.DelayBetweenFailedRequestsInSec = delayBetweenFailedRequestsInSec;
-			this.DelayFailRequestRate = delayFaileRequestRate;
+			this.DelayFailedRequestRate = delayFailedRequestRate;
 		}
 
 		public static NetworkOptions LogicBrokerDefaultNetworkOptions
