@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using System.Text;
 
 namespace LogicBrokerAccess.Services
 {
@@ -52,7 +53,7 @@ namespace LogicBrokerAccess.Services
 				throw new LogicBrokerException( string.Format( "{0}. Task was cancelled", exceptionDetails ) );
 			}
 
-			var responseContent = await this.ThrottleRequestAsync( command, mark, async ( token ) =>
+			var responseContent = await this.ThrottleRequestAsync( command, async ( token ) =>
 			{
 				var httpResponse = await HttpClient.GetAsync( command.Url ).ConfigureAwait( false );
 				var content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
@@ -60,11 +61,36 @@ namespace LogicBrokerAccess.Services
 				ThrowIfError( httpResponse, content );
 
 				return content;
-			}, cancellationToken ).ConfigureAwait( false );
+			}, cancellationToken, mark ).ConfigureAwait( false );
 
 			var response = JsonConvert.DeserializeObject< T >( responseContent );
 
 			return response;
+		}
+
+		protected async Task< T > PutAsync< T >( LogicBrokerCommand command, CancellationToken cancellationToken, Mark mark )
+		{
+			if ( mark == null )
+				mark = Mark.CreateNew();
+
+			if ( cancellationToken.IsCancellationRequested )
+			{
+				var exceptionDetails = this.CreateMethodCallInfo( command.Url, mark, additionalInfo: this.AdditionalLogInfo() );
+				throw new LogicBrokerException( string.Format( "{0}. Task was cancelled", exceptionDetails ) );
+			}
+
+			var response = await this.ThrottleRequestAsync( command, async ( token ) =>
+			{
+				var requestContent = new StringContent( command.PayloadJson, Encoding.UTF8, "application/json" );
+				var httpResponse = await HttpClient.PutAsync( command.Url, requestContent, token ).ConfigureAwait( false );
+				var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+
+				ThrowIfError( httpResponse, responseContent );
+
+				return responseContent;
+			}, cancellationToken, mark ).ConfigureAwait( false );
+
+			return JsonConvert.DeserializeObject< T >( response );
 		}
 
 		private void ThrowIfError( HttpResponseMessage response, string message )
@@ -74,7 +100,8 @@ namespace LogicBrokerAccess.Services
 			if ( response.IsSuccessStatusCode )
 				return;
 
-			if ( responseStatusCode == HttpStatusCode.Unauthorized )
+			if ( responseStatusCode == HttpStatusCode.Unauthorized ||
+				responseStatusCode == HttpStatusCode.BadRequest )
 			{
 				throw new LogicBrokerException( message );
 			}
@@ -82,7 +109,7 @@ namespace LogicBrokerAccess.Services
 			throw new LogicBrokerNetworkException( message );
 		}
 
-		private Task< T > ThrottleRequestAsync< T >( LogicBrokerCommand command, Mark mark, Func< CancellationToken, Task< T > > processor, CancellationToken token )
+		private Task< T > ThrottleRequestAsync< T >( LogicBrokerCommand command, Func< CancellationToken, Task< T > > processor, CancellationToken token, Mark mark )
 		{
 			return command.Throttler.ExecuteAsync( () =>
 			{
@@ -91,7 +118,7 @@ namespace LogicBrokerAccess.Services
 					{
 						using( var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
-							LogicBrokerLogger.LogStarted( this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() ) );
+							LogicBrokerLogger.LogStarted( this.CreateMethodCallInfo( command.Url, mark, payload: command.PayloadJson, additionalInfo: this.AdditionalLogInfo() ) );
 							linkedTokenSource.CancelAfter( Config.NetworkOptions.RequestTimeoutMs );
 
 							var result = await processor( linkedTokenSource.Token ).ConfigureAwait( false );

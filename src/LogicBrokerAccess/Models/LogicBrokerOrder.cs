@@ -4,13 +4,6 @@ using System.Linq;
 
 namespace LogicBrokerAccess.Models
 {
-	public class LogicBrokerOrderResponse
-	{
-		public LogicBrokerOrder[] Records { get; set; }
-		public int TotalPages { get; set; }
-		public int CurrentPage { get; set; }
-	}
-
 	public class LogicBrokerOrder
 	{
 		public string OrderNumber { get; set; }
@@ -64,6 +57,19 @@ namespace LogicBrokerAccess.Models
 		Cancelled = 1100,
 		Failed = 1200,
 		Ignored = 1400
+	}
+
+	public class LogicBrokerGetOrdersResponse
+	{
+		public LogicBrokerOrder [] Records { get; set; }
+		public int TotalPages { get; set; }
+		public int CurrentPage { get; set; }
+	}
+
+	public class LogicBrokerPutOrdersStatusResponse
+	{
+		public string [] Records { get; set; }
+		public int TotalRecords { get; set; }
 	}
 
 	public static class OrderExtensions

@@ -2,7 +2,7 @@
 using LogicBrokerAccess.Configuration;
 using LogicBrokerAccess.Models;
 using LogicBrokerAccess.Shared;
-using LogicBrokerAccess.Throttling;
+using Netco.Extensions;
 using Netco.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,10 +20,13 @@ namespace LogicBrokerAccess.Services.Orders
 
 		public async Task< IEnumerable< Order > > GetOrderDetailsAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
+			if ( mark == null )
+				mark = Mark.CreateNew();
+
 			var orders = new List< Order >();
 			try
 			{
-				orders = await CollectOrdersFromAllPages( startDateUtc, endDateUtc, mark, token );
+				orders = await CollectOrdersFromAllPages( startDateUtc, endDateUtc, token, mark );
 			}
 			catch ( Exception ex )
 			{
@@ -33,15 +36,15 @@ namespace LogicBrokerAccess.Services.Orders
 			return orders;
 		}
 
-		private async Task< List< Order > > CollectOrdersFromAllPages( DateTime startDateUtc, DateTime endDateUtc, Mark mark, CancellationToken token )
+		private async Task< List< Order > > CollectOrdersFromAllPages( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
 			var orders = new List< Order >();
-			LogicBrokerOrderResponse response;
+			LogicBrokerGetOrdersResponse response;
 			var paging = new Paging( base.PageSize );
-			LogicBrokerCommand command = new GetOrdersCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, paging );
+			var command = new GetOrdersCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, startDateUtc, endDateUtc, paging );
 			do
 			{
-				response = await base.GetAsync< LogicBrokerOrderResponse >( command, token, mark ).ConfigureAwait( false );
+				response = await base.GetAsync< LogicBrokerGetOrdersResponse >( command, token, mark ).ConfigureAwait( false );
 				if( response?.Records != null )
 				{
 					orders.AddRange( response.Records.Select( r => r.ToSvOrder() ).ToList() );
@@ -50,6 +53,22 @@ namespace LogicBrokerAccess.Services.Orders
 			} while( command.Paging.CurrentPage < response?.TotalPages );
 
 			return orders;
+		}
+
+		public async Task< IEnumerable< string > > AcknowledgeOrdersAsync( IEnumerable< string > logicBrokerKeys, CancellationToken token, Mark mark )
+		{
+			if ( mark == null )
+				mark = Mark.CreateNew();
+
+			string acknowledgedStatus = LogicBrokerOrderStatusEnum.Acknowledged.ToString();
+			var batches = logicBrokerKeys.Slice( PageSize );
+			var acknowledgedOrders = await batches.ProcessInBatchAsync( LogicBrokerCommand.MaxConcurrentBatches, async logicBrokerKeysBatch =>
+			{
+				var payload = new PutOrdersStatusPayload( acknowledgedStatus, logicBrokerKeysBatch, onlyIncreaseStatus: true );
+				var command = new PutOrdersStatusCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, payload );
+				return await base.PutAsync< LogicBrokerPutOrdersStatusResponse >( command, token, mark ).ConfigureAwait( false );
+			} );
+			return acknowledgedOrders.SelectMany( o => o.Records.ToList() );
 		}
 	}
 }

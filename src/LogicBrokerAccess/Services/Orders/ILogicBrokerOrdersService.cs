@@ -10,5 +10,7 @@ namespace LogicBrokerAccess.Services.Orders
 	public interface ILogicBrokerOrdersService
 	{
 		Task< IEnumerable< Order > > GetOrderDetailsAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken none, Mark mark );
+
+		Task< IEnumerable< string > > AcknowledgeOrdersAsync( IEnumerable< string > logicBrokerKeys, CancellationToken token, Mark mark );
 	}
 }

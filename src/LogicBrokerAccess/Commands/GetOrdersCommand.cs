@@ -6,7 +6,7 @@ namespace LogicBrokerAccess.Commands
 {
 	public class GetOrdersCommand : LogicBrokerCommand
 	{
-		//Request rate limited to 1 request every 2 seconds
+		//Request rate limited to 1 request every 2 seconds with bursts up to 25 requests.
 		private const int MaxRequestsPerTimeInterval = 1;
 		private const int TimeIntervalInSec = 3;
 
