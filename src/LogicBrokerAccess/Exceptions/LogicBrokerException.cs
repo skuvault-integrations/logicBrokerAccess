@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LogicBrokerAccess.Commands
+namespace LogicBrokerAccess.Exceptions
 {
 	public class LogicBrokerException : Exception
 	{

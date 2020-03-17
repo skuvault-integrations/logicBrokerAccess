@@ -4,7 +4,6 @@ using Polly;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using LogicBrokerAccess.Commands;
 using LogicBrokerAccess.Configuration;
 
 namespace LogicBrokerAccess.Throttling
