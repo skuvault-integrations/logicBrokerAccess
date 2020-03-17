@@ -4,7 +4,7 @@ using LogicBrokerAccess.Services.Orders;
 
 namespace LogicBrokerAccess
 {
-	public class LogicBrokerFactory
+	public class LogicBrokerFactory : ILogicBrokerFactory
 	{
 		private LogicBrokerConfig Config;
 
@@ -13,7 +13,12 @@ namespace LogicBrokerAccess
 			this.Config = config;
 		}
 
-		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials, int pageSize = Paging.DefaultPageSize )
+		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials )
+		{
+			return new LogicBrokerOrdersService( this.Config, credentials, Paging.DefaultPageSize );
+		}
+
+		public ILogicBrokerOrdersService CreateOrdersService( LogicBrokerCredentials credentials, int pageSize )
 		{
 			return new LogicBrokerOrdersService( this.Config, credentials, pageSize );
 		}
