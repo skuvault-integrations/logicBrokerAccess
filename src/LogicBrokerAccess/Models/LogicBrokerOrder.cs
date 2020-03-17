@@ -7,6 +7,10 @@ namespace LogicBrokerAccess.Models
 	public class LogicBrokerOrder
 	{
 		public string OrderNumber { get; set; }
+		public string DocumentDate { get; set; }
+		/// <summary>
+		/// Date only, no time
+		/// </summary>
 		public string OrderDate { get; set; }
 		public LogicBrokerOrderLine[] OrderLines { get; set; }
 		public LogicBrokerOrderTax[] Taxes { get; set; }
@@ -79,7 +83,7 @@ namespace LogicBrokerAccess.Models
 			return new Order
 			{
 				OrderNumber = logicBrokerOrder.OrderNumber,
-				OrderDate = logicBrokerOrder.OrderDate.ToDateTime(),
+				DocumentDate = logicBrokerOrder.DocumentDate.ToDateTime(),
 				LogicBrokerKey = logicBrokerOrder.Identifier?.LogicbrokerKey,
 				OrderLines = logicBrokerOrder.OrderLines?.Select( l => l.ToSvOrderLine() ),
 				Taxes = logicBrokerOrder.Taxes,

@@ -6,7 +6,7 @@ namespace LogicBrokerAccess.Models
 	public class Order
 	{
 		public string OrderNumber { get; set; }
-		public DateTime OrderDate { get; set; }
+		public DateTime DocumentDate { get; set; }	
 		public string LogicBrokerKey { get; set; }
 		public IEnumerable< OrderLine > OrderLines { get; set; }
 		public IEnumerable< LogicBrokerOrderTax > Taxes { get; set; }

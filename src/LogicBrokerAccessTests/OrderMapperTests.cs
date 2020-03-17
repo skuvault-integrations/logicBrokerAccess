@@ -15,7 +15,7 @@ namespace LogicBrokerAccessTests
 		public void ToSvOrder()
 		{
 			var orderNumber = "TEST12345";
-			var orderDate = DateTime.UtcNow;
+			var documentDate = DateTime.UtcNow;
 			var orderTaxAmount = 12.3m;
 			var orderLines = new []
 			{
@@ -47,7 +47,7 @@ namespace LogicBrokerAccessTests
 			var order = new LogicBrokerOrder
 			{
 				OrderNumber = orderNumber,
-				OrderDate = orderDate.ToStringUtcIso8601(),
+				DocumentDate = documentDate.ToStringUtcIso8601(),
 				OrderLines = orderLines,
 				Taxes = taxes,
 				Identifier = logicBrokerIdentifier,
@@ -59,7 +59,7 @@ namespace LogicBrokerAccessTests
 			var svOrder = order.ToSvOrder();
 
 			svOrder.OrderNumber.Should().Be( orderNumber );
-			svOrder.OrderDate.Should().Be( orderDate );
+			svOrder.DocumentDate.Should().Be( documentDate );
 			svOrder.LogicBrokerKey.Should().Be( logicBrokerIdentifier.LogicbrokerKey );
 			svOrder.OrderLines.Count().Should().Be( orderLines.Count() );
 			svOrder.Taxes.Should().BeEquivalentTo( taxes.ToList() );
