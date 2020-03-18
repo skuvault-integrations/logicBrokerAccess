@@ -23,14 +23,15 @@ namespace LogicBrokerAccess.Services.Orders
 			if ( mark == null )
 				mark = Mark.CreateNew();
 
-			var orders = new List< Order >();
+			List< Order > orders;
 			try
 			{
 				orders = await CollectOrdersFromAllPages( startDateUtc, endDateUtc, token, mark );
 			}
 			catch ( Exception ex )
 			{
-				LogicBrokerLogger.LogTrace( ex, "message" );
+				LogicBrokerLogger.LogTrace( ex.Message );
+				throw ex;
 			}
 
 			return orders;

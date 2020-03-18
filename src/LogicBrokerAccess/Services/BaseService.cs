@@ -97,13 +97,17 @@ namespace LogicBrokerAccess.Services
 		{
 			var responseStatusCode = response.StatusCode;
 
-			if ( response.IsSuccessStatusCode )
+			if( response.IsSuccessStatusCode )
 				return;
 
-			if ( responseStatusCode == HttpStatusCode.Unauthorized ||
-				responseStatusCode == HttpStatusCode.BadRequest )
+			if( responseStatusCode == HttpStatusCode.BadRequest )
 			{
 				throw new LogicBrokerException( message );
+			}
+
+			if( responseStatusCode == HttpStatusCode.Unauthorized )
+			{
+				throw new LogicBrokerUnauthorizedException( message );
 			}
 
 			throw new LogicBrokerNetworkException( message );

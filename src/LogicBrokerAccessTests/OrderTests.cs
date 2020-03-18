@@ -7,6 +7,7 @@ using Netco.Logging;
 using FluentAssertions;
 using System.Linq;
 using System.Collections.Generic;
+using LogicBrokerAccess.Exceptions;
 
 namespace LogicBrokerAccessTests
 {
@@ -29,6 +30,22 @@ namespace LogicBrokerAccessTests
 			var orders = ordersService.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
 
 			orders.Count().Should().NotBe( 0 );
+		}
+
+		[ Test ]
+		public void GetOrdersByDateAsync_Exceptions()
+		{
+			var invalidCreds = new LogicBrokerAccess.Configuration.LogicBrokerCredentials( "invalid credentials" );
+			var service = logicBrokerFactory.CreateOrdersService( invalidCreds );
+
+			try
+			{
+				var orders = service.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
+			}
+			catch ( Exception ex )
+			{
+				Assert.IsTrue( ex.InnerException is LogicBrokerException );
+			}
 		}
 
 		[ Test ]

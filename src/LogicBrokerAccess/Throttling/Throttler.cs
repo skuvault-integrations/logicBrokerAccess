@@ -53,23 +53,9 @@ namespace LogicBrokerAccess.Throttling
 				}
 			}
 
-			var retryCount = 0;
-
 			while( true )
 			{
-				try
-				{
-					return await this.TryExecuteAsync( funcToThrottle ).ConfigureAwait( false );
-				}
-				catch( Exception )
-				{
-					if (retryCount >= this._maxRetryCount)
-						throw;
-
-					this._remainingQuota = 0;
-					await Task.Delay( _quotaRestoreTimeInSeconds * 1000 ).ConfigureAwait( false );
-					retryCount++;
-				}
+				return await this.TryExecuteAsync( funcToThrottle ).ConfigureAwait( false );
 			}
 		}
 
