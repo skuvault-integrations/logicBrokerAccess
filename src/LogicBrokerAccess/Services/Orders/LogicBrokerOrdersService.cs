@@ -18,7 +18,7 @@ namespace LogicBrokerAccess.Services.Orders
 			: base( credentials, config, pageSize )
 		{ }
 
-		public async Task< IEnumerable< Order > > GetOrderDetailsAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
+		public async Task< IEnumerable< Order > > GetOrdersByDateAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
 			if ( mark == null )
 				mark = Mark.CreateNew();

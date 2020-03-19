@@ -28,7 +28,6 @@ namespace LogicBrokerAccess.Throttling
 		public int DayLimitRemaining { get; set; }
 
 		private readonly int _quotaRestoreTimeInSeconds;
-		private readonly int _maxRetryCount;
 		private readonly Timer _timer;
 		private bool _timerStarted = false;
 		private object _lock = new object();
@@ -36,7 +35,6 @@ namespace LogicBrokerAccess.Throttling
 		public Throttler( ThrottlingOptions throttlingOptions )
 		{
 			this.MaxQuota = this._remainingQuota = throttlingOptions.MaxRequestsPerTimeInterval;
-			this._maxRetryCount = throttlingOptions.MaxRetryAttempts;
 			this._quotaRestoreTimeInSeconds = throttlingOptions.TimeIntervalInSec;
 
 			_timer = new Timer( RestoreQuota, null, Timeout.Infinite, _quotaRestoreTimeInSeconds * 1000 );
@@ -132,18 +130,14 @@ namespace LogicBrokerAccess.Throttling
 	{
 		public int MaxRequestsPerTimeInterval { get; private set; }
 		public int TimeIntervalInSec { get; private set; }
-		public int MaxRetryAttempts { get; private set; }
-		public const int DefaultMaxRetryAttempts = 10;
 
-		public ThrottlingOptions( int maxRequests, int timeIntervalInSec, int maxRetryAttempts = DefaultMaxRetryAttempts )
+		public ThrottlingOptions( int maxRequests, int timeIntervalInSec )
 		{
 			Condition.Requires( maxRequests, "maxRequests" ).IsGreaterOrEqual( 1 );
 			Condition.Requires( timeIntervalInSec, "timeIntervalInSec" ).IsGreaterOrEqual( 1 );
-			Condition.Requires( maxRetryAttempts, "maxRetryAttempts" ).IsGreaterOrEqual( 0 );
 
 			this.MaxRequestsPerTimeInterval = maxRequests;
 			this.TimeIntervalInSec = timeIntervalInSec;
-			this.MaxRetryAttempts = maxRetryAttempts;
 		}
 
 		public static ThrottlingOptions LogicBrokerDefaultThrottlingOptions

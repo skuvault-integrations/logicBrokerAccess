@@ -8,6 +8,7 @@ using FluentAssertions;
 using System.Linq;
 using System.Collections.Generic;
 using LogicBrokerAccess.Exceptions;
+using System.Threading.Tasks;
 
 namespace LogicBrokerAccessTests
 {
@@ -25,22 +26,22 @@ namespace LogicBrokerAccessTests
 		}
 
 		[ Test ]
-		public void GetOrderDetails()
+		public void GetOrdersByDateAsync()
 		{
-			var orders = ordersService.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
+			var orders = ordersService.GetOrdersByDateAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
 
 			orders.Count().Should().NotBe( 0 );
 		}
 
 		[ Test ]
-		public void GetOrdersByDateAsync_Exceptions()
+		public async Task GetOrdersByDateAsync_InvalidCredentials_ShouldThrow()
 		{
 			var invalidCreds = new LogicBrokerAccess.Configuration.LogicBrokerCredentials( "invalid credentials" );
 			var service = logicBrokerFactory.CreateOrdersService( invalidCreds );
 
 			try
 			{
-				var orders = service.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
+				await service.GetOrdersByDateAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() );
 			}
 			catch ( Exception ex )
 			{
@@ -53,7 +54,7 @@ namespace LogicBrokerAccessTests
 		{
 			var ordersServiceWithPageSize1 = logicBrokerFactory.CreateOrdersService( this.Credentials, 1 );
 
-			var orders = ordersServiceWithPageSize1.GetOrderDetailsAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
+			var orders = ordersServiceWithPageSize1.GetOrdersByDateAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, CancellationToken.None, Mark.Blank() ).Result;
 
 			orders.Count().Should().BeGreaterThan( 1 );
 		}
