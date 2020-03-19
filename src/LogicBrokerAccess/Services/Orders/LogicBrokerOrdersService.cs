@@ -18,7 +18,7 @@ namespace LogicBrokerAccess.Services.Orders
 			: base( credentials, config, pageSize )
 		{ }
 
-		public async Task< IEnumerable< Order > > GetOrdersByDateAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
+		public IEnumerable< Order > GetOrdersByDate( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
 			if ( mark == null )
 				mark = Mark.CreateNew();
@@ -26,7 +26,7 @@ namespace LogicBrokerAccess.Services.Orders
 			List< Order > orders;
 			try
 			{
-				orders = await CollectOrdersFromAllPages( startDateUtc, endDateUtc, token, mark );
+				orders = CollectOrdersFromAllPagesAsync( startDateUtc, endDateUtc, token, mark ).Result;
 			}
 			catch ( Exception ex )
 			{
@@ -37,7 +37,26 @@ namespace LogicBrokerAccess.Services.Orders
 			return orders;
 		}
 
-		private async Task< List< Order > > CollectOrdersFromAllPages( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
+		public async Task< IEnumerable< Order > > GetOrdersByDateAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
+		{
+			if ( mark == null )
+				mark = Mark.CreateNew();
+
+			List< Order > orders;
+			try
+			{
+				orders = await CollectOrdersFromAllPagesAsync( startDateUtc, endDateUtc, token, mark );
+			}
+			catch ( Exception ex )
+			{
+				LogicBrokerLogger.LogTrace( ex.Message );
+				throw ex;
+			}
+
+			return orders;
+		}
+
+		private async Task< List< Order > > CollectOrdersFromAllPagesAsync( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
 		{
 			var orders = new List< Order >();
 			LogicBrokerGetOrdersResponse response;
