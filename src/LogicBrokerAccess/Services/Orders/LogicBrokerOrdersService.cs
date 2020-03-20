@@ -45,7 +45,7 @@ namespace LogicBrokerAccess.Services.Orders
 			List< Order > orders;
 			try
 			{
-				orders = await CollectOrdersFromAllPagesAsync( startDateUtc, endDateUtc, token, mark );
+				orders = await CollectOrdersFromAllPagesAsync( startDateUtc, endDateUtc, token, mark ).ConfigureAwait( false );
 			}
 			catch ( Exception ex )
 			{
