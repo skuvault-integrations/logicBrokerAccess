@@ -14,6 +14,6 @@ namespace LogicBrokerAccess.Models
 		public string ShippingClass { get; set; }
 		public LogicBrokerShipToAddress ShipToAddress { get; set; }
 		public decimal TotalAmount { get; set; }
-		public LogicBrokerOrderStatusEnum StatusCode { get; internal set; }
+		public LogicBrokerOrderStatusEnum StatusCode { get; set; }
 	}
 }

@@ -49,7 +49,7 @@ namespace LogicBrokerAccess.Models
 
 	public enum LogicBrokerOrderStatusEnum
 	{
-		Unknown,
+		Unknown = -1,
 		New = 0,
 		Submitted = 100,
 		ReadyToAcknowledge = 150,
