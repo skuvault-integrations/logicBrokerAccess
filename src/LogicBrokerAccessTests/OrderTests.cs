@@ -60,6 +60,7 @@ namespace LogicBrokerAccessTests
 		}
 
 		[ Test ]
+		[ Ignore("Enter valid unacknowledged LogicBrokerKey's") ]
 		public void AcknowledgeOrdersAsync()
 		{
 			var ordersServiceWithPageSize1 = logicBrokerFactory.CreateOrdersService( this.Credentials, 1 );

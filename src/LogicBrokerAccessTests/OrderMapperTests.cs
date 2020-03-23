@@ -44,6 +44,7 @@ namespace LogicBrokerAccessTests
 			};
 			var totalAmount = 12.30m;
 			var statusCode = "123";
+			var note = "Mary had a little demagorgon";
 			var order = new LogicBrokerOrder
 			{
 				OrderNumber = orderNumber,
@@ -53,7 +54,8 @@ namespace LogicBrokerAccessTests
 				Identifier = logicBrokerIdentifier,
 				ShipmentInfos = logicBrokerShipmentInfos,
 				TotalAmount = totalAmount,
-				StatusCode = statusCode
+				StatusCode = statusCode,
+				Note = note
 			};
 
 			var svOrder = order.ToSvOrder();
@@ -67,6 +69,7 @@ namespace LogicBrokerAccessTests
 			svOrder.ShippingClass.Should().Be( shippingClass );
 			svOrder.TotalAmount.Should().Be( totalAmount );
 			svOrder.StatusCode.Should().Be( statusCode.ToSvOrderStatusCode() );
+			svOrder.Note.Should().Be( note );
 		}
 
 		[ Test ]
@@ -140,7 +143,7 @@ namespace LogicBrokerAccessTests
 					SupplierSKU = testSku
 				}, 
 				Price = price,
-				Quanity = quantity,
+				Quantity = quantity,
 				Taxes = new List< LogicBrokerItemTax >
 				{ 
 					new LogicBrokerItemTax

@@ -2,7 +2,7 @@
 {
 	public class LogicBrokerOrderLine
 	{
-		public int Quanity { get; set; }
+		public int Quantity { get; set; }
 		public LogicBrokerItemIdentifier ItemIdentifier { get; set; }
 		public decimal Price { get; set; }
 		public LogicBrokerItemDiscount[] Discounts { get; set; }

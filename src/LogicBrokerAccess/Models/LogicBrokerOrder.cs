@@ -19,6 +19,7 @@ namespace LogicBrokerAccess.Models
 		public LogicBrokerShipToAddress ShipToAddress { get; set; }
 		public decimal TotalAmount { get; set; }
 		public string StatusCode { get; set; }
+		public string Note { get; set; }
 	}
 
 	public class LogicBrokerOrderTax
@@ -91,7 +92,8 @@ namespace LogicBrokerAccess.Models
 				ShippingClass = logicBrokerOrder.ShipmentInfos?.FirstOrDefault().ClassCode,
 				ShipToAddress = logicBrokerOrder.ShipToAddress,
 				TotalAmount = logicBrokerOrder.TotalAmount,
-				StatusCode = logicBrokerOrder.StatusCode != null ? logicBrokerOrder.StatusCode.ToSvOrderStatusCode() : LogicBrokerOrderStatusEnum.Unknown
+				StatusCode = logicBrokerOrder.StatusCode != null ? logicBrokerOrder.StatusCode.ToSvOrderStatusCode() : LogicBrokerOrderStatusEnum.Unknown,
+				Note = logicBrokerOrder.Note
 			};
 		}
 
@@ -100,7 +102,7 @@ namespace LogicBrokerAccess.Models
 			return new OrderLine
 			{
 				SupplierSku = logicBrokerOrderLine.ItemIdentifier?.SupplierSKU,
-				Quantity = logicBrokerOrderLine.Quanity,
+				Quantity = logicBrokerOrderLine.Quantity,
 				Price = logicBrokerOrderLine.Price,
 				Weight = logicBrokerOrderLine.Weight,
 				Discounts = logicBrokerOrderLine.Discounts,
