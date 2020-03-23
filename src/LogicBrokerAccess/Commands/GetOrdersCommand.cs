@@ -21,7 +21,7 @@ namespace LogicBrokerAccess.Commands
 
 		private static string GetOrderFilterUrl( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			return $"&filters.from={startDateUtc.ToStringUtcIso8601()}&filters.to={endDateUtc.ToStringUtcIso8601()}";
+			return $"&filters.from={startDateUtc.ToIso8601DateString()}&filters.to={endDateUtc.ToIso8601DateString()}";
 		}
 
 		private static ThrottlingOptions GetThrottlingOptions()

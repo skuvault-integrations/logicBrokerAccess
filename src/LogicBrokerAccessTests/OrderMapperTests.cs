@@ -48,7 +48,7 @@ namespace LogicBrokerAccessTests
 			var order = new LogicBrokerOrder
 			{
 				OrderNumber = orderNumber,
-				DocumentDate = documentDate.ToStringUtcIso8601(),
+				DocumentDate = documentDate.ToIso8601DateString(),
 				OrderLines = orderLines,
 				Taxes = taxes,
 				Identifier = logicBrokerIdentifier,

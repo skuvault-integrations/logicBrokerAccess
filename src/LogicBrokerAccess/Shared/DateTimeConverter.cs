@@ -5,10 +5,9 @@ namespace LogicBrokerAccess.Shared
 {
 	public static class DateTimeConverter
 	{
-		public static string ToStringUtcIso8601( this DateTime dateTime )
+		public static string ToIso8601DateString( this DateTime dateTimeUtc )
 		{
-			var universalTime = dateTime.ToUniversalTime();
-			var result = XmlConvert.ToString( universalTime, XmlDateTimeSerializationMode.RoundtripKind );
+			var result = XmlConvert.ToString( dateTimeUtc, XmlDateTimeSerializationMode.RoundtripKind );
 			return result;
 		}
 

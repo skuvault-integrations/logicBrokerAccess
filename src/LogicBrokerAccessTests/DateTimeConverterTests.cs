@@ -9,13 +9,13 @@ namespace LogicBrokerAccessTests
 	public class DateTimeConverterTests
 	{
 		[ Test ]
-		public void ToUtcIso8601()
+		public void ToIso8601DateString()
 		{
 			var year = 2030; var day = 31; var month = 3;
 			var hour = 2; var minute = 51; var second = 12; var ms = 23;
 			DateTime sourceDate = new DateTime( year, month, day, hour, minute, second, ms, DateTimeKind.Utc );
 
-			var iso8601Date = sourceDate.ToStringUtcIso8601();
+			var iso8601Date = sourceDate.ToIso8601DateString();
 
 			iso8601Date.Should().Be( $"{year:D4}-{month:D2}-{day:D2}T{hour:D2}:{minute:D2}:{second:D2}.{ms:D3}Z" );
 		}
