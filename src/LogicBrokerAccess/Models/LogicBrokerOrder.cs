@@ -20,11 +20,18 @@ namespace LogicBrokerAccess.Models
 		public decimal TotalAmount { get; set; }
 		public string StatusCode { get; set; }
 		public string Note { get; set; }
+		public LogicBrokerOrderDiscount[] Discounts { get; set; }
 	}
 
 	public class LogicBrokerOrderTax
 	{
 		public decimal TaxAmount { get; set; }
+	}
+
+	public class LogicBrokerOrderDiscount
+	{
+		public decimal DiscountAmount { get; set; }
+		public string DiscountCode { get; set; }
 	}
 
 	public class LogicBrokerShipmentInfo
@@ -93,7 +100,8 @@ namespace LogicBrokerAccess.Models
 				ShipToAddress = logicBrokerOrder.ShipToAddress,
 				TotalAmount = logicBrokerOrder.TotalAmount,
 				StatusCode = logicBrokerOrder.StatusCode != null ? logicBrokerOrder.StatusCode.ToSvOrderStatusCode() : LogicBrokerOrderStatusEnum.Unknown,
-				Note = logicBrokerOrder.Note
+				Note = logicBrokerOrder.Note,
+				Discounts = logicBrokerOrder.Discounts
 			};
 		}
 

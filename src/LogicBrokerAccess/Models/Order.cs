@@ -16,5 +16,6 @@ namespace LogicBrokerAccess.Models
 		public decimal TotalAmount { get; set; }
 		public LogicBrokerOrderStatusEnum StatusCode { get; set; }
 		public string Note { get; set; }
+		public IEnumerable< LogicBrokerOrderDiscount > Discounts { get; set; }
 	}
 }

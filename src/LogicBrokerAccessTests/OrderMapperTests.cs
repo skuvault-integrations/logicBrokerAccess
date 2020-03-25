@@ -16,7 +16,6 @@ namespace LogicBrokerAccessTests
 		{
 			var orderNumber = "TEST12345";
 			var documentDate = DateTime.UtcNow;
-			var orderTaxAmount = 12.3m;
 			var orderLines = new []
 			{
 				new LogicBrokerOrderLine()
@@ -25,7 +24,7 @@ namespace LogicBrokerAccessTests
 			{
 				new LogicBrokerOrderTax
 				{
-					TaxAmount = orderTaxAmount
+					TaxAmount = 12.3m                   
 				}
 			};
 			var logicBrokerIdentifier = new LogicBrokerIdentifier
@@ -45,6 +44,14 @@ namespace LogicBrokerAccessTests
 			var totalAmount = 12.30m;
 			var statusCode = "123";
 			var note = "Mary had a little demagorgon";
+			var orderDiscounts = new []
+			{
+				new LogicBrokerOrderDiscount
+				{
+					DiscountAmount = 1.3m,
+					DiscountCode = "CODE1"                    
+				}
+			};
 			var order = new LogicBrokerOrder
 			{
 				OrderNumber = orderNumber,
@@ -55,7 +62,8 @@ namespace LogicBrokerAccessTests
 				ShipmentInfos = logicBrokerShipmentInfos,
 				TotalAmount = totalAmount,
 				StatusCode = statusCode,
-				Note = note
+				Note = note,
+				Discounts = orderDiscounts
 			};
 
 			var svOrder = order.ToSvOrder();
@@ -70,6 +78,7 @@ namespace LogicBrokerAccessTests
 			svOrder.TotalAmount.Should().Be( totalAmount );
 			svOrder.StatusCode.Should().Be( statusCode.ToSvOrderStatusCode() );
 			svOrder.Note.Should().Be( note );
+			svOrder.Discounts.Should().BeEquivalentTo( orderDiscounts );
 		}
 
 		[ Test ]
