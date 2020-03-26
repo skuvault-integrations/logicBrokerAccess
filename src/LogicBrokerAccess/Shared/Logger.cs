@@ -7,13 +7,13 @@ using System.Reflection;
 
 namespace LogicBrokerAccess.Shared
 {
-	public class LogicBrokerAccessLogger
+	public class LogicBrokerLogger
 	{
 		private static readonly string _versionInfo;
 		private const string ChannelMark = "LogicBroker";
 		private const int MaxLogLineSize = 0xA00000; //10mb
 
-		static LogicBrokerAccessLogger()
+		static LogicBrokerLogger()
 		{
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			_versionInfo = FileVersionInfo.GetVersionInfo( assembly.Location ).FileVersion;

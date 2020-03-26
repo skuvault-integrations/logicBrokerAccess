@@ -10,7 +10,7 @@ namespace LogicBrokerAccessTests
 {
 	public abstract class BaseTest
 	{
-		private readonly string sandboxApiBaseUri = "https://stage.commerceapi.io/api";
+		private readonly string sandboxDomainUri = "https://stage.commerceapi.io";
 
 		public LogicBrokerCredentials Credentials { get; }
 		public LogicBrokerConfig Config { get; }
@@ -19,7 +19,7 @@ namespace LogicBrokerAccessTests
 		{
 			var testCredentials = this.LoadTestSettings< TestCredentials >( @"\..\..\credentials.csv" );
 			this.Credentials = new LogicBrokerCredentials( testCredentials.SubscriptionKey );
-			this.Config = new LogicBrokerConfig( sandboxApiBaseUri );
+			this.Config = new LogicBrokerConfig( sandboxDomainUri );
 		}
 
 		protected T LoadTestSettings< T >( string filePath )
