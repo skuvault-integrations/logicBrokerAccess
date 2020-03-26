@@ -15,9 +15,9 @@ namespace LogicBrokerAccess.Commands
 			: base( GetCommandUrl( domainUrl, subscriptionKey ), new Payload( payload.ToJson() ), GetThrottlingOptions() )
 		{ }
 
-		private static BaseCommandUrl GetCommandUrl( string domainUrl, string subscriptionKey )
+		private static string GetCommandUrl( string domainUrl, string subscriptionKey )
 		{
-			return new BaseCommandUrl( domainUrl, PutOrdersStatusPath, subscriptionKey );
+			return new BaseCommandUrl( domainUrl, PutOrdersStatusPath, subscriptionKey ).Url;
 		}
 
 		private static ThrottlingOptions GetThrottlingOptions()

@@ -14,9 +14,9 @@ namespace LogicBrokerAccess.Commands
 			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetOrderFilterUrl( startDateUtc, endDateUtc ), GetThrottlingOptions(), paging )
 		{ }
 
-		private static BaseCommandUrl GetCommandUrl( string domainUrl, string subscriptionKey )
+		private static string GetCommandUrl( string domainUrl, string subscriptionKey )
 		{
-			return new BaseCommandUrl( domainUrl, GetOrdersPath, subscriptionKey );
+			return new BaseCommandUrl( domainUrl, GetOrdersPath, subscriptionKey ).Url;
 		}
 
 		private static string GetOrderFilterUrl( DateTime startDateUtc, DateTime endDateUtc )

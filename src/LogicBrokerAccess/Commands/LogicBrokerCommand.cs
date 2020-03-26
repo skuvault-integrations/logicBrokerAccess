@@ -16,21 +16,21 @@ namespace LogicBrokerAccess.Commands
 		public Throttler Throttler { get; private set; }
 		public const int MaxConcurrentBatches = 20;     //Hard "burst" limit is 25
 
-		protected LogicBrokerCommand( BaseCommandUrl commandUrl, Payload payload, ThrottlingOptions throttlingOptions )
+		protected LogicBrokerCommand( string commandUrl, Payload payload, ThrottlingOptions throttlingOptions )
 			: this( commandUrl, throttlingOptions, Paging.CreateDisabled() ) 
 		{
 			this.PayloadJson = payload.JsonObject;
 		}
 
-		protected LogicBrokerCommand( BaseCommandUrl commandUrl, string filterUrl, ThrottlingOptions throttlingOptions, Paging paging )
+		protected LogicBrokerCommand( string commandUrl, string filterUrl, ThrottlingOptions throttlingOptions, Paging paging )
 			: this( commandUrl, throttlingOptions, paging )
 		{
 			this.endpointUrl += filterUrl;
 		}
 
-		private LogicBrokerCommand( BaseCommandUrl commandUrl, ThrottlingOptions throttlingOptions, Paging paging )
+		private LogicBrokerCommand( string commandUrl, ThrottlingOptions throttlingOptions, Paging paging )
 		{
-			this.endpointUrl = commandUrl.url;
+			this.endpointUrl = commandUrl;
 			this.Paging = paging ?? Paging.CreateDefault();
 			this.Throttler = new Throttler( throttlingOptions ?? ThrottlingOptions.LogicBrokerDefaultThrottlingOptions );
 		}
@@ -38,9 +38,7 @@ namespace LogicBrokerAccess.Commands
 
 	public class BaseCommandUrl
 	{
-		public readonly string url;
-		public readonly string subscriptionKey;
-		public readonly string domainUrl;
+		public readonly string Url;
 
 		public BaseCommandUrl( string domainUrl, string endpointUrl, string subscriptionKey )
 		{
@@ -48,7 +46,7 @@ namespace LogicBrokerAccess.Commands
 			Condition.Requires( endpointUrl, "endpointUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
 
-			this.url = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}";
+			this.Url = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}";
 		}
 	}
 
