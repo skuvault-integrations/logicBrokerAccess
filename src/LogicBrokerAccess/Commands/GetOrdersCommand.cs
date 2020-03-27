@@ -11,8 +11,10 @@ namespace LogicBrokerAccess.Commands
 		private const int TimeIntervalInSec = 3;
 
 		public GetOrdersCommand( string domainUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc, Paging paging = null ) 
-			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetOrderFilterUrl( startDateUtc, endDateUtc ), GetThrottlingOptions(), paging )
-		{ }
+			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetThrottlingOptions(), paging )
+		{ 
+			this.EndpointUrl += GetOrderFilterUrl( startDateUtc, endDateUtc );
+		}
 
 		private static string GetCommandUrl( string domainUrl, string subscriptionKey )
 		{

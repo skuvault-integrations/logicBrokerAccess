@@ -82,7 +82,7 @@ namespace LogicBrokerAccess.Services.Orders
 
 			string acknowledgedStatus = LogicBrokerOrderStatusEnum.Acknowledged.ToString();
 			var batches = logicBrokerKeys.Slice( PageSize );
-			var acknowledgedOrders = await batches.ProcessInBatchAsync( LogicBrokerCommand.MaxConcurrentBatches, async logicBrokerKeysBatch =>
+			var acknowledgedOrders = await batches.ProcessInBatchAsync( LogicBrokerCommand.DefaultMaxConcurrentBatches, async logicBrokerKeysBatch =>
 			{
 				var payload = new PutOrdersStatusPayload( acknowledgedStatus, logicBrokerKeysBatch, onlyIncreaseStatus: true );
 				var command = new PutOrdersStatusCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, payload );

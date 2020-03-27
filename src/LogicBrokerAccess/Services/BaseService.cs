@@ -81,7 +81,7 @@ namespace LogicBrokerAccess.Services
 
 			var response = await this.ThrottleRequestAsync( command, async ( token ) =>
 			{
-				var requestContent = new StringContent( command.PayloadJson, Encoding.UTF8, "application/json" );
+				var requestContent = new StringContent( command.Payload, Encoding.UTF8, "application/json" );
 				var httpResponse = await HttpClient.PutAsync( command.Url, requestContent, token ).ConfigureAwait( false );
 				var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
@@ -122,7 +122,7 @@ namespace LogicBrokerAccess.Services
 					{
 						using( var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
-							LogicBrokerLogger.LogStarted( this.CreateMethodCallInfo( command.Url, mark, payload: command.PayloadJson, additionalInfo: this.AdditionalLogInfo() ) );
+							LogicBrokerLogger.LogStarted( this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() ) );
 							linkedTokenSource.CancelAfter( Config.NetworkOptions.RequestTimeoutMs );
 
 							var result = await processor( linkedTokenSource.Token ).ConfigureAwait( false );

@@ -9,29 +9,17 @@ namespace LogicBrokerAccess.Commands
 		protected const string GetOrdersReadyPath = "/api/v2/Orders/Ready";
 		protected const string PutOrdersStatusPath = "/api/v2/Orders/Status";
 
-		public string Url { get { return $"{endpointUrl}{Paging.PagingUrl}"; } }
-		private readonly string endpointUrl;
-		public string PayloadJson { get; protected set; }
+		public string Url => $"{EndpointUrl}{Paging.PagingUrl}";
+		protected string EndpointUrl;
+		public string Payload { get; protected set; }
 		public Paging Paging { get; private set; }
 		public Throttler Throttler { get; private set; }
-		public const int MaxConcurrentBatches = 20;     //Hard "burst" limit is 25
+		public const int DefaultMaxConcurrentBatches = 20;     //Hard "burst" limit is 25
 
-		protected LogicBrokerCommand( string commandUrl, Payload payload, ThrottlingOptions throttlingOptions )
-			: this( commandUrl, throttlingOptions, Paging.CreateDisabled() ) 
+		protected LogicBrokerCommand( string commandUrl, ThrottlingOptions throttlingOptions, Paging paging = null )
 		{
-			this.PayloadJson = payload.JsonObject;
-		}
-
-		protected LogicBrokerCommand( string commandUrl, string filterUrl, ThrottlingOptions throttlingOptions, Paging paging )
-			: this( commandUrl, throttlingOptions, paging )
-		{
-			this.endpointUrl += filterUrl;
-		}
-
-		private LogicBrokerCommand( string commandUrl, ThrottlingOptions throttlingOptions, Paging paging )
-		{
-			this.endpointUrl = commandUrl;
-			this.Paging = paging ?? Paging.CreateDefault();
+			this.EndpointUrl = commandUrl;
+			this.Paging = paging ?? Paging.CreateDisabled();
 			this.Throttler = new Throttler( throttlingOptions ?? ThrottlingOptions.LogicBrokerDefaultThrottlingOptions );
 		}
 	}
@@ -64,10 +52,7 @@ namespace LogicBrokerAccess.Commands
 		public const int DefaultPageSize = 100;
 		private readonly int PageSize;
 		public int CurrentPage { get; private set; }
-		public string PagingUrl { get 
-		{ 
-			return isEnabled ? $"&filters.page={CurrentPage}&filters.pageSize={PageSize}" : ""; 
-		} }
+		public string PagingUrl => isEnabled ? $"&filters.page={CurrentPage}&filters.pageSize={PageSize}" : "";
 		public bool isEnabled = true;
 
 		public Paging( int pageSize = DefaultPageSize, int currentPage = 0 )
