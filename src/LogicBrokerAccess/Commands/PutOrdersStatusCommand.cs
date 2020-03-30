@@ -12,14 +12,9 @@ namespace LogicBrokerAccess.Commands
 		private const int TimeIntervalInSec = 2;
 
 		public PutOrdersStatusCommand( string domainUrl, string subscriptionKey, PutOrdersStatusPayload payload )
-			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetThrottlingOptions() )
+			: base( domainUrl, PutOrdersStatusPath, subscriptionKey , GetThrottlingOptions() )
 		{ 
 			this.Payload = payload.ToJson();
-		}
-
-		private static string GetCommandUrl( string domainUrl, string subscriptionKey )
-		{
-			return new BaseCommandUrl( domainUrl, PutOrdersStatusPath, subscriptionKey ).Url;
 		}
 
 		private static ThrottlingOptions GetThrottlingOptions()

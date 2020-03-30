@@ -9,16 +9,17 @@ namespace LogicBrokerAccess.Commands
 		protected const string GetOrdersReadyPath = "/api/v2/Orders/Ready";
 		protected const string PutOrdersStatusPath = "/api/v2/Orders/Status";
 
-		public string Url => $"{EndpointUrl}{Paging.PagingUrl}";
-		protected string EndpointUrl;
+		public string Url => $"{EndpointUrl}{QueryStringParams}{Paging.PagingUrl}";
+		private readonly string EndpointUrl;
+		protected string QueryStringParams;
 		public string Payload { get; protected set; }
 		public Paging Paging { get; private set; }
 		public Throttler Throttler { get; private set; }
 		public const int DefaultMaxConcurrentBatches = 20;     //Hard "burst" limit is 25
 
-		protected LogicBrokerCommand( string commandUrl, ThrottlingOptions throttlingOptions, Paging paging = null )
+		protected LogicBrokerCommand( string domainUrl, string commandUrl, string subscriptionKey, ThrottlingOptions throttlingOptions, Paging paging = null )
 		{
-			this.EndpointUrl = commandUrl;
+			this.EndpointUrl = new BaseCommandUrl( domainUrl, commandUrl, subscriptionKey ).Url;
 			this.Paging = paging ?? Paging.CreateDisabled();
 			this.Throttler = new Throttler( throttlingOptions ?? ThrottlingOptions.LogicBrokerDefaultThrottlingOptions );
 		}
@@ -28,13 +29,13 @@ namespace LogicBrokerAccess.Commands
 	{
 		public readonly string Url;
 
-		public BaseCommandUrl( string domainUrl, string endpointUrl, string subscriptionKey )
+		public BaseCommandUrl( string domainUrl, string endpointPath, string subscriptionKey )
 		{
 			Condition.Requires( domainUrl, "domainUrl" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( endpointUrl, "endpointUrl" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( endpointPath, "endpointPath" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( subscriptionKey, "subscriptionKey" ).IsNotNullOrWhiteSpace();
 
-			this.Url = $"{domainUrl}{endpointUrl}?subscription-key={subscriptionKey}";
+			this.Url = $"{domainUrl}{endpointPath}?subscription-key={subscriptionKey}";
 		}
 	}
 
