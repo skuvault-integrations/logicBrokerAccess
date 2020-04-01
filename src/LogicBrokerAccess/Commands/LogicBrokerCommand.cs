@@ -1,5 +1,7 @@
 ﻿using CuttingEdge.Conditions;
 using LogicBrokerAccess.Throttling;
+using System.Net.Http;
+using System.Text;
 
 namespace LogicBrokerAccess.Commands
 {
@@ -8,14 +10,17 @@ namespace LogicBrokerAccess.Commands
 		protected const string GetOrdersPath = "/api/v2/Orders";
 		protected const string GetOrdersReadyPath = "/api/v2/Orders/Ready";
 		protected const string PutOrdersStatusPath = "/api/v2/Orders/Status";
+		protected const string PostInventoryBroadcastPath = "/api/v1/Inventory/Broadcast";
 
 		public string Url => $"{EndpointUrl}{QueryStringParams}{Paging.PagingUrl}";
 		private readonly string EndpointUrl;
 		protected string QueryStringParams;
+
 		public string Payload { get; protected set; }
+		public PostRequestContent PostRequestContent { get; protected set; }
 		public Paging Paging { get; private set; }
 		public Throttler Throttler { get; private set; }
-		public const int DefaultMaxConcurrentBatches = 20;     //Hard "burst" limit is 25
+		public const int DefaultMaxConcurrentBatches = 20;     //Hard "burst" limit is 25		
 
 		protected LogicBrokerCommand( string domainUrl, string commandUrl, string subscriptionKey, ThrottlingOptions throttlingOptions, Paging paging = null )
 		{
@@ -82,6 +87,22 @@ namespace LogicBrokerAccess.Commands
 				isEnabled = false
 			};
 			return paging;
+		}
+	}
+
+	public class PostRequestContent
+	{
+		private const string FileFieldKey = "file";
+		private const string PostBoundary = "----SKUVAULT_BOUNDARY";
+
+		public HttpContent Content { get; private set; }
+
+		public PostRequestContent( string postFileContents )
+		{
+			var content = new MultipartFormDataContent( PostBoundary );
+			content.Headers.ContentType.MediaType = "multipart/form-data";
+			content.Add( new StringContent( postFileContents, Encoding.UTF8 ), FileFieldKey );
+			this.Content = content;
 		}
 	}
 }

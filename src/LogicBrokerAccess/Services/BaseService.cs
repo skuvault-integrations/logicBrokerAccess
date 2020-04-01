@@ -30,7 +30,7 @@ namespace LogicBrokerAccess.Services
 			set => _additionalLogInfo = value;
 		}
 
-		public BaseService( LogicBrokerCredentials credentials, LogicBrokerConfig config, int pageSize )
+		public BaseService( LogicBrokerConfig config, LogicBrokerCredentials credentials, int pageSize )
 		{
 			Condition.Requires( credentials, "credentials" ).IsNotNull();
 			Condition.Requires( config, "config" ).IsNotNull();
@@ -75,7 +75,7 @@ namespace LogicBrokerAccess.Services
 
 			if ( cancellationToken.IsCancellationRequested )
 			{
-				var exceptionDetails = this.CreateMethodCallInfo( command.Url, mark, additionalInfo: this.AdditionalLogInfo() );
+				var exceptionDetails = this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() );
 				throw new LogicBrokerException( string.Format( "{0}. Task was cancelled", exceptionDetails ) );
 			}
 
@@ -83,6 +83,31 @@ namespace LogicBrokerAccess.Services
 			{
 				var requestContent = new StringContent( command.Payload, Encoding.UTF8, "application/json" );
 				var httpResponse = await HttpClient.PutAsync( command.Url, requestContent, token ).ConfigureAwait( false );
+				var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+
+				ThrowIfError( httpResponse, responseContent );
+
+				return responseContent;
+			}, cancellationToken, mark ).ConfigureAwait( false );
+
+			return JsonConvert.DeserializeObject< T >( response );
+		}
+
+		protected async Task< T > PostAsync< T >( LogicBrokerCommand command, CancellationToken cancellationToken, Mark mark )
+		{
+			if ( mark == null )
+				mark = Mark.CreateNew();
+
+			if ( cancellationToken.IsCancellationRequested )
+			{
+				var exceptionDetails = this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() );
+				throw new LogicBrokerException( string.Format( "{0}. Task was cancelled", exceptionDetails ) );
+			}
+
+			var response = await this.ThrottleRequestAsync( command, async ( token ) =>
+			{
+				var requestContent = command.PostRequestContent.Content;
+				var httpResponse = await HttpClient.PostAsync( command.Url, requestContent, token ).ConfigureAwait( false );
 				var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
 				ThrowIfError( httpResponse, responseContent );
@@ -134,10 +159,10 @@ namespace LogicBrokerAccess.Services
 					}, 
 					( exception, timeSpan, retryCount ) =>
 					{
-						string retryDetails = this.CreateMethodCallInfo( command.Url, mark, additionalInfo: this.AdditionalLogInfo() );
+						string retryDetails = this.CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() );
 						LogicBrokerLogger.LogTraceRetryStarted( timeSpan.Seconds, retryCount, retryDetails );
 					},
-					() => CreateMethodCallInfo( command.Url, mark, additionalInfo: this.AdditionalLogInfo() ),
+					() => CreateMethodCallInfo( command.Url, mark, payload: command.Payload, additionalInfo: this.AdditionalLogInfo() ),
 					LogicBrokerLogger.LogTraceException );
 			} );
 		}
@@ -164,7 +189,7 @@ namespace LogicBrokerAccess.Services
 				string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
 				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
 				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo,
-				string.IsNullOrWhiteSpace( payload ) ? string.Empty : ", " + payload
+				string.IsNullOrWhiteSpace( payload ) ? string.Empty : $", Payload: \"{payload}\""
 			);
 			return str;
 		}

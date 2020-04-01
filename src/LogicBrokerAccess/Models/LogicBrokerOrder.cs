@@ -71,19 +71,6 @@ namespace LogicBrokerAccess.Models
 		Ignored = 1400
 	}
 
-	public class LogicBrokerGetOrdersResponse
-	{
-		public LogicBrokerOrder [] Records { get; set; }
-		public int TotalPages { get; set; }
-		public int CurrentPage { get; set; }
-	}
-
-	public class LogicBrokerPutOrdersStatusResponse
-	{
-		public string [] Records { get; set; }
-		public int TotalRecords { get; set; }
-	}
-
 	public static class OrderExtensions
 	{
 		public static Order ToSvOrder( this LogicBrokerOrder logicBrokerOrder )

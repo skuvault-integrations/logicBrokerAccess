@@ -39,4 +39,10 @@ namespace LogicBrokerAccess.Commands
 			this.OnlyIncreaseStatus = onlyIncreaseStatus;
 		}
 	}
+
+	public class LogicBrokerPutOrdersStatusResponse
+	{
+		public string [] Records { get; set; }
+		public int TotalRecords { get; set; }
+	}
 }
