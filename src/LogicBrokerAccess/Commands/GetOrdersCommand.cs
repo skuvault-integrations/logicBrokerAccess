@@ -1,4 +1,5 @@
-﻿using LogicBrokerAccess.Shared;
+﻿using LogicBrokerAccess.Models;
+using LogicBrokerAccess.Shared;
 using LogicBrokerAccess.Throttling;
 using System;
 
@@ -11,12 +12,9 @@ namespace LogicBrokerAccess.Commands
 		private const int TimeIntervalInSec = 3;
 
 		public GetOrdersCommand( string domainUrl, string subscriptionKey, DateTime startDateUtc, DateTime endDateUtc, Paging paging = null ) 
-			: base( GetCommandUrl( domainUrl, subscriptionKey ), GetOrderFilterUrl( startDateUtc, endDateUtc ), GetThrottlingOptions(), paging )
-		{ }
-
-		private static BaseCommandUrl GetCommandUrl( string domainUrl, string subscriptionKey )
-		{
-			return new BaseCommandUrl( domainUrl, GetOrdersPath, subscriptionKey );
+			: base( domainUrl, GetOrdersPath, subscriptionKey, GetThrottlingOptions(), paging )
+		{ 
+			this.QueryStringParams = GetOrderFilterUrl( startDateUtc, endDateUtc );
 		}
 
 		private static string GetOrderFilterUrl( DateTime startDateUtc, DateTime endDateUtc )
@@ -28,5 +26,12 @@ namespace LogicBrokerAccess.Commands
 		{
 			return new ThrottlingOptions( MaxRequestsPerTimeInterval, TimeIntervalInSec);
 		}
+	}
+
+	public class LogicBrokerGetOrdersResponse
+	{
+		public LogicBrokerOrder [] Records { get; set; }
+		public int TotalPages { get; set; }
+		public int CurrentPage { get; set; }
 	}
 }

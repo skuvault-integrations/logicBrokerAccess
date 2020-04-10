@@ -15,7 +15,7 @@ namespace LogicBrokerAccess.Services.Orders
 	public class LogicBrokerOrdersService : BaseService, ILogicBrokerOrdersService
 	{
 		public LogicBrokerOrdersService( LogicBrokerConfig config, LogicBrokerCredentials credentials, int pageSize ) 
-			: base( credentials, config, pageSize )
+			: base( config, credentials, pageSize )
 		{ }
 
 		public IEnumerable< Order > GetOrdersByDate( DateTime startDateUtc, DateTime endDateUtc, CancellationToken token, Mark mark )
@@ -81,8 +81,8 @@ namespace LogicBrokerAccess.Services.Orders
 				mark = Mark.CreateNew();
 
 			string acknowledgedStatus = LogicBrokerOrderStatusEnum.Acknowledged.ToString();
-			var batches = logicBrokerKeys.Slice( PageSize );
-			var acknowledgedOrders = await batches.ProcessInBatchAsync( LogicBrokerCommand.MaxConcurrentBatches, async logicBrokerKeysBatch =>
+			var batches = logicBrokerKeys.Slice( PageSize );	//Batching is not required by LogicBroker
+			var acknowledgedOrders = await batches.ProcessInBatchAsync( LogicBrokerCommand.DefaultMaxConcurrentBatches, async logicBrokerKeysBatch =>
 			{
 				var payload = new PutOrdersStatusPayload( acknowledgedStatus, logicBrokerKeysBatch, onlyIncreaseStatus: true );
 				var command = new PutOrdersStatusCommand( base.Config.DomainUrl, base.Credentials.SubscriptionKey, payload );

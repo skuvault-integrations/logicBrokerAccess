@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 namespace LogicBrokerAccessTests
 {
 	[ TestFixture ]
-	public class OrderTests : BaseTest
+	public class OrdersServiceTests : BaseTest
 	{
 		private ILogicBrokerOrdersService ordersService;
-		private LogicBrokerFactory logicBrokerFactory;
+		private ILogicBrokerFactory logicBrokerFactory;
 
 		[ SetUp ]
 		public void Init()

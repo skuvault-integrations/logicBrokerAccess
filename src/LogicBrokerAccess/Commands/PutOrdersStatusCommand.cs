@@ -12,12 +12,9 @@ namespace LogicBrokerAccess.Commands
 		private const int TimeIntervalInSec = 2;
 
 		public PutOrdersStatusCommand( string domainUrl, string subscriptionKey, PutOrdersStatusPayload payload )
-			: base( GetCommandUrl( domainUrl, subscriptionKey ), new Payload( payload.ToJson() ), GetThrottlingOptions() )
-		{ }
-
-		private static BaseCommandUrl GetCommandUrl( string domainUrl, string subscriptionKey )
-		{
-			return new BaseCommandUrl( domainUrl, PutOrdersStatusPath, subscriptionKey );
+			: base( domainUrl, PutOrdersStatusPath, subscriptionKey , GetThrottlingOptions() )
+		{ 
+			this.Payload = payload.ToJson();
 		}
 
 		private static ThrottlingOptions GetThrottlingOptions()
@@ -28,9 +25,9 @@ namespace LogicBrokerAccess.Commands
 
 	public class PutOrdersStatusPayload
 	{
-		public string Status;   //Text, not code:(
-		public bool OnlyIncreaseStatus;
-		public IEnumerable< string > LogicbrokerKeys;
+		public string Status { get; }   //Text, not code:(
+		public bool OnlyIncreaseStatus { get; }
+		public IEnumerable< string > LogicbrokerKeys { get; }
 
 		public PutOrdersStatusPayload( string status, IEnumerable< string > logicbrokerKeys, bool onlyIncreaseStatus = true )
 		{
@@ -41,5 +38,11 @@ namespace LogicBrokerAccess.Commands
 			this.LogicbrokerKeys = logicbrokerKeys;
 			this.OnlyIncreaseStatus = onlyIncreaseStatus;
 		}
+	}
+
+	public class LogicBrokerPutOrdersStatusResponse
+	{
+		public string [] Records { get; set; }
+		public int TotalRecords { get; set; }
 	}
 }
