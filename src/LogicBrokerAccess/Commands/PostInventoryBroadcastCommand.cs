@@ -11,7 +11,7 @@ namespace LogicBrokerAccess.Commands
 	{
 		//Request rate limited to 1 request every 60 seconds with bursts up to 2 requests.
 		private const int MaxRequestsPerTimeInterval = 1;
-		private const int TimeIntervalInSec = 2;
+		private const int TimeIntervalInSec = 90;
 
 		public PostInventoryBroadcastCommand( string domainUrl, string subscriptionKey, IEnumerable< LogicBrokerInventoryItem > inventoryItems ) 
 			: base( domainUrl, PostInventoryBroadcastPath, subscriptionKey, GetThrottlingOptions() )
