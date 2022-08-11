@@ -2,6 +2,7 @@
 using LogicBrokerAccess.Models;
 using LogicBrokerAccess.Throttling;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -26,7 +27,7 @@ namespace LogicBrokerAccess.Commands
 		{
 			var sb = new StringBuilder();
 			using ( var writer = new StringWriter( sb ) )
-			using ( var csvWriter = new CsvWriter( writer ) )
+			using ( var csvWriter = new CsvWriter( writer, CultureInfo.InvariantCulture ) )
 			{
 				csvWriter.WriteHeader< LogicBrokerInventoryItem >();
 				csvWriter.NextRecord();
