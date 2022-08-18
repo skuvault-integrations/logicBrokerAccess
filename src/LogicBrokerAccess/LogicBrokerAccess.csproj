@@ -9,11 +9,12 @@
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/logicBrokerAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault/logicBrokerAccess</RepositoryUrl>
-    <Version>1.0.3.0</Version>
+    <Version>1.0.4.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageVersion>1.0.4.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
