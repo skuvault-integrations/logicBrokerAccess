@@ -2,6 +2,7 @@
 using CsvHelper.Configuration;
 using LogicBrokerAccess.Configuration;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +18,7 @@ namespace LogicBrokerAccessTests
 
 		public BaseTest()
 		{
-			var testCredentials = this.LoadTestSettings< TestCredentials >( @"\..\..\credentials.csv" );
+			var testCredentials = this.LoadTestSettings< TestCredentials >( @"\..\..\Files\credentials.csv" );
 			this.Credentials = new LogicBrokerCredentials( testCredentials.SubscriptionKey );
 			this.Config = new LogicBrokerConfig( sandboxDomainUri );
 		}
@@ -28,7 +29,7 @@ namespace LogicBrokerAccessTests
 
 			using ( var streamReader = new StreamReader( basePath + filePath ) )
 			{
-				var csvConfig = new Configuration()
+				var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
 				{
 					Delimiter = ","
 				};

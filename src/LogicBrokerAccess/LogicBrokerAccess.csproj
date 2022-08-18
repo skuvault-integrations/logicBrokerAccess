@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="12.0.0" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="CuttingEdge.Conditions" Version="1.2.0" />
     <PackageReference Include="Netco" Version="2.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
